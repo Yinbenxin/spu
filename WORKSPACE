@@ -26,7 +26,9 @@ spu_deps()
 load("@yacl//bazel:repositories.bzl", "yacl_deps")
 
 yacl_deps()
+load("@gaia_net//bazel:gaia_net_deps.bzl", "gaia_net_deps")
 
+gaia_net_deps()
 load("@psi//bazel:repositories.bzl", "psi_deps")
 
 psi_deps()

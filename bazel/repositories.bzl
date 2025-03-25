@@ -39,22 +39,24 @@ def _yacl():
         http_archive,
         name = "yacl",
         urls = [
-            "https://github.com/secretflow/yacl/archive/refs/tags/0.4.5b8_nightly_20241014.tar.gz",
+            "https://github.com/Yinbenxin/yacl/archive/refs/tags/gaia_1.5.tar.gz",
         ],
-        strip_prefix = "yacl-0.4.5b8_nightly_20241014",
-        sha256 = "9141792f07eba507ffd21c57ec3df2ad5fdf90ce605ffb7bc1b7b4e84a9c34fa",
+        strip_prefix = "yacl-gaia_1.5",
+        sha256 = "55e1ce3cb0938805d795e566b5dc066abb01bbd9ecc322a87a3bc72aada1a0fb",
     )
+
 
 def _libpsi():
     maybe(
         http_archive,
         name = "psi",
         urls = [
-            "https://github.com/secretflow/psi/archive/refs/tags/v0.5.0.dev241115.tar.gz",
+            "https://github.com/Yinbenxin/psi/archive/refs/tags/gaia_1.5.tar.gz",
         ],
-        strip_prefix = "psi-0.5.0.dev241115",
-        sha256 = "4d5ccc61282c4f887cee2c12fe3f414dfd7e916952849e92ffb1f6835d657a35",
+        strip_prefix = "psi-gaia_1.5",
+        sha256 = "0b7211f8177a05f2fd1accd0267e2accc8043b427a5e6e76567657f08f6fbabc",
     )
+
 
 def _rules_proto_grpc():
     http_archive(

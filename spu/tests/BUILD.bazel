@@ -259,6 +259,21 @@ py_test(
         "//spu:psi",
     ],
 )
+py_test(
+    name = "psi_rr22_test",
+    srcs = ["psi_rr22_test.py"],
+    data = [
+        "//spu/tests/data",
+    ],
+    flaky = True,
+    tags = [
+        "exclusive-if-local",
+    ],
+    deps = [
+        ":utils",
+        "//spu:psi",
+    ],
+)
 
 py_test(
     name = "ub_psi_test",
