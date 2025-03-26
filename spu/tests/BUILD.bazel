@@ -336,3 +336,28 @@ py_test(
         ":jnp_testbase",
     ],
 )
+
+py_library(
+    name = "gene_input",
+    srcs = ["gene_input.py"],
+    deps = [
+        "//spu:api",
+    ],
+)
+
+py_test(
+    name = "test_vole_psi",
+    srcs = ["test_vole_psi.py"],
+    data = [
+        "//spu/tests/data",
+    ],
+    flaky = True,
+    tags = [
+        "exclusive-if-local",
+    ],
+    deps = [
+        ":utils",
+        ":gene_input",
+        "//spu:pypsi",
+    ],
+)

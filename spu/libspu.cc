@@ -15,6 +15,9 @@
 #include <cstddef>
 #include <utility>
 
+#include "channel.h"
+#include "ichannel.h"
+#include "memchannel.h"
 #include "pybind11/iostream.h"
 #include "pybind11/numpy.h"
 #include "pybind11/pybind11.h"
@@ -273,8 +276,30 @@ void BindLink(py::module& m) {
           [](const std::shared_ptr<Context>& self, size_t strides = 1) {
             return self->NextRank(strides);
           },
-          NO_GIL, "Gets next party rank", py::arg("strides") = 1);
+          NO_GIL, "Gets next party rank", py::arg("strides") = 1)
+      .def(
+          "add_gaia_net",
+          [](const std::shared_ptr<Context>& self) { self->add_gaia_net(); },
+          NO_GIL, "Adds gaia net")
+      .def(
+          "add_gaia_net",
+          [](const std::shared_ptr<Context>& self, gaianet::IChannel* chl) {
+            auto channel = std::shared_ptr<gaianet::IChannel>(chl);
+            self->add_gaia_net(channel);
+          },
+          NO_GIL, "Adds gaia net with parameters", py::arg("chl") = nullptr);
 
+  // py::class_<gaianet::IChannel, std::shared_ptr<gaianet::IChannel>>(
+  //     m, "GAIAChannel", "the gaia channel handle");
+  py::class_<gaianet::IChannel>(m, "GAIAChannel", "the gaia channel handle")
+      .def(
+          "destroy",
+          [](gaianet::IChannel* self) {
+            if (self) {
+              delete self;  // 手动释放内存
+            }
+          },
+          NO_GIL, "Manually destroy and cleanup the channel");
   m.def(
       "create_brpc",
       [](const ContextDesc& desc, size_t self_rank,
@@ -292,10 +317,10 @@ void BindLink(py::module& m) {
       py::arg("desc"), py::arg("self_rank"), py::kw_only(),
       py::arg("log_details") = false);
 
-    m.def(
+  m.def(
       "create_grpc",
       [](const ContextDesc& desc, size_t self_rank,
-          bool log_details) -> std::shared_ptr<Context> {
+         bool log_details) -> std::shared_ptr<Context> {
         py::gil_scoped_release release;
         brpc::FLAGS_max_body_size = std::numeric_limits<uint64_t>::max();
         brpc::FLAGS_socket_max_unwritten_bytes =
@@ -303,8 +328,7 @@ void BindLink(py::module& m) {
 
         auto ctx = yacl::link::FactoryBrpc().CreateContext(desc, self_rank);
         ctx->ConnectToMesh(log_details ? spdlog::level::info
-                                        : spdlog::level::debug);
-        ctx->add_gaia_net();
+                                       : spdlog::level::debug);
         return ctx;
       },
       py::arg("desc"), py::arg("self_rank"), py::kw_only(),
@@ -319,6 +343,14 @@ void BindLink(py::module& m) {
           ctx->ConnectToMesh();
           return ctx;
         });
+  m.def(
+      "create_gaia_channel",
+      [](size_t self_rank, const std::string& taskid) -> gaianet::IChannel* {
+        auto* chl =
+            new gaianet::MemChannel(self_rank, 1 - self_rank, taskid, true);
+        return chl;
+      },
+      py::arg("self_rank"), py::arg("taskid") = "taskid");
 }
 
 struct PyBindShare {

@@ -125,6 +125,7 @@ py_library(
     ],
 )
 
+
 python_proto_compile(
     name = "pir_py_proto",
     output_mode = "NO_PREFIX_FLAT",
@@ -149,4 +150,19 @@ py_package(
     deps = [
         ":api",
     ],
+)
+
+py_library(
+    name = "pypsi",
+    srcs = [
+        "pypsi.py",
+        ":link_py_proto",
+        ":pir_py_proto",
+        ":psi_py_proto",
+        ":psi_v2_py_proto_fixed",
+    ],
+    deps = [
+        ":psi",
+    ],
+
 )
