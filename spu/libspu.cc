@@ -279,27 +279,29 @@ void BindLink(py::module& m) {
           NO_GIL, "Gets next party rank", py::arg("strides") = 1)
       .def(
           "add_gaia_net",
-          [](const std::shared_ptr<Context>& self) { self->add_gaia_net(); },
-          NO_GIL, "Adds gaia net")
-      .def(
-          "add_gaia_net",
-          [](const std::shared_ptr<Context>& self, gaianet::IChannel* chl) {
-            auto channel = std::shared_ptr<gaianet::IChannel>(chl);
-            self->add_gaia_net(channel);
+          [](const std::shared_ptr<Context>& self, const std::string& taskid,
+             const std::string& chl_type, const std::string& server_addr,
+             const std::string& redis_uri) {
+            // self->add_gaia_net();
+            self->add_gaia_net(nullptr, taskid, chl_type, server_addr,
+                               redis_uri);
           },
-          NO_GIL, "Adds gaia net with parameters", py::arg("chl") = nullptr);
+          NO_GIL, "Adds gaia net", py::arg("taskid") = "taskid1",
+          py::arg("chl_type") = "mem",
+          py::arg("server_addr") = "127.0.0.1:9900",
+          py::arg("redis_uri") = "tcp://127.0.0.1:6379")
+      .def(
+          "creat_gaia_net",
+          [](const std::shared_ptr<Context>& self,
+             std::shared_ptr<gaianet::IChannel> chl) {
+            self->add_gaia_net(std::move(chl));
+          },
+          NO_GIL, "Adds gaia net with parameters", py::arg("chl"));
 
   // py::class_<gaianet::IChannel, std::shared_ptr<gaianet::IChannel>>(
   //     m, "GAIAChannel", "the gaia channel handle");
-  py::class_<gaianet::IChannel>(m, "GAIAChannel", "the gaia channel handle")
-      .def(
-          "destroy",
-          [](gaianet::IChannel* self) {
-            if (self) {
-              delete self;  // 手动释放内存
-            }
-          },
-          NO_GIL, "Manually destroy and cleanup the channel");
+  py::class_<gaianet::IChannel, std::shared_ptr<gaianet::IChannel>>(
+      m, "GAIAChannel", "the gaia channel handle");
   m.def(
       "create_brpc",
       [](const ContextDesc& desc, size_t self_rank,
@@ -310,6 +312,7 @@ void BindLink(py::module& m) {
             std::numeric_limits<int64_t>::max() / 2;
 
         auto ctx = yacl::link::FactoryBrpc().CreateContext(desc, self_rank);
+
         ctx->ConnectToMesh(log_details ? spdlog::level::info
                                        : spdlog::level::debug);
         return ctx;
@@ -319,20 +322,25 @@ void BindLink(py::module& m) {
 
   m.def(
       "create_grpc",
-      [](const ContextDesc& desc, size_t self_rank,
-         bool log_details) -> std::shared_ptr<Context> {
+      [](const ContextDesc& desc, size_t self_rank, bool log_details,
+         const std::string& taskid, const std::string& chl_type,
+         const std::string& server_addr,
+         const std::string& redis_uri) -> std::shared_ptr<Context> {
         py::gil_scoped_release release;
         brpc::FLAGS_max_body_size = std::numeric_limits<uint64_t>::max();
         brpc::FLAGS_socket_max_unwritten_bytes =
             std::numeric_limits<int64_t>::max() / 2;
 
         auto ctx = yacl::link::FactoryBrpc().CreateContext(desc, self_rank);
-        ctx->ConnectToMesh(log_details ? spdlog::level::info
-                                       : spdlog::level::debug);
+        ctx->add_gaia_net(nullptr, taskid, chl_type, server_addr, redis_uri);
+        // ctx->ConnectToMesh(log_details ? spdlog::level::info
+        //                                : spdlog::level::debug);
         return ctx;
       },
-      py::arg("desc"), py::arg("self_rank"), py::kw_only(),
-      py::arg("log_details") = false);
+      py::arg("desc"), py::arg("self_rank"), py::arg("log_details") = false,
+      py::arg("taskid") = "taskid", py::arg("chl_type") = "mem",
+      py::arg("server_addr") = "127.0.0.1:9900",
+      py::arg("redis_uri") = "tcp://127.0.0.1:6379");
 
   m.def("create_mem",
         [](const ContextDesc& desc,
@@ -345,9 +353,10 @@ void BindLink(py::module& m) {
         });
   m.def(
       "create_gaia_channel",
-      [](size_t self_rank, const std::string& taskid) -> gaianet::IChannel* {
-        auto* chl =
-            new gaianet::MemChannel(self_rank, 1 - self_rank, taskid, true);
+      [](size_t self_rank,
+         const std::string& taskid) -> std::shared_ptr<gaianet::IChannel> {
+        auto chl = std::make_shared<gaianet::MemChannel>(
+            self_rank, 1 - self_rank, taskid, true);
         return chl;
       },
       py::arg("self_rank"), py::arg("taskid") = "taskid");

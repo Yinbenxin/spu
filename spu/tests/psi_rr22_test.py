@@ -22,7 +22,7 @@ from google.protobuf import json_format
 import spu.libspu.link as link
 import spu.psi as psi
 
-from spu.tests.utils import create_link_desc, wc_count
+from spu.tests.utils import create_link_desc, wc_count, get_free_port
 
 
 class UnitTests(unittest.TestCase):
@@ -35,73 +35,51 @@ class UnitTests(unittest.TestCase):
         return super().tearDown()
 
     def test_psi(self):
-        link_desc = create_link_desc(2)
+        # link_desc = create_link_desc(2)
 
-        receiver_config_json = f'''
-        {{
-            "protocol_config": {{
-                "protocol": "PROTOCOL_RR22",
-                "ecdh_config": {{
-                    "curve": "CURVE_25519"
-                }},
-                "role": "ROLE_RECEIVER",
-                "broadcast_result": true
-            }},
-            "input_config": {{
-                "type": "IO_TYPE_FILE_CSV",
-                "path": "spu/tests/data/alice.csv"
-            }},
-            "output_config": {{
-                "type": "IO_TYPE_FILE_CSV",
-                "path": "{self.tempdir_.name}/spu_test_psi_alice_psi_ouput.csv"
-            }},
-            "keys": [
-                "id"
-            ],
-            "skip_duplicates_check": true,
-            "disable_alignment": true
-        }}
-        '''
 
-        sender_config_json = f'''
-        {{
-            "protocol_config": {{
-                "protocol": "PROTOCOL_RR22",
-                "ecdh_config": {{
-                    "curve": "CURVE_25519"
-                }},
-                "role": "ROLE_SENDER",
-                "broadcast_result": true
-            }},
-            "input_config": {{
-                "type": "IO_TYPE_FILE_CSV",
-                "path": "spu/tests/data/bob.csv"
-            }},
-            "output_config": {{
-                "type": "IO_TYPE_FILE_CSV",
-                "path": "{self.tempdir_.name}/spu_test_psi_bob_psi_ouput.csv"
-            }},
-            "keys": [
-                "id"
-            ],
-            "skip_duplicates_check": true,
-            "disable_alignment": true
-        }}
-        '''
+        def wrap(rank):
+            link_desc = link.Desc()
+            link_desc.add_party("alice", f"127.0.0.1:{get_free_port()}")
+            link_desc.add_party("bob", f"127.0.0.1:{get_free_port()}")
+            role ="ROLE_RECEIVER" if rank == 0 else "ROLE_SENDER"
+            csv_path_input_self = "spu/tests/data/alice.csv" if rank == 0 else "spu/tests/data/bob.csv"
+            csv_path_output_self = f"{self.tempdir_.name}/spu_test_psi_alice_psi_ouput.csv" if rank == 0 else f"{self.tempdir_.name}/spu_test_psi_bob_psi_ouput.csv"    
+            config_json = f'''
+                {{
+                    "protocol_config": {{
+                        "protocol": "PROTOCOL_RR22",
+                        "ecdh_config": {{
+                            "curve": "CURVE_25519"
+                        }},
+                        "role": "{role}",
+                        "broadcast_result": true
+                    }},
+                    "input_config": {{
+                        "type": "IO_TYPE_FILE_CSV",
+                        "path": "{csv_path_input_self}"
+                    }},
+                    "output_config": {{
+                        "type": "IO_TYPE_FILE_CSV",
+                        "path": "{csv_path_output_self}"
+                    }},
+                    "keys": [
+                        "id"
+                    ],
+                    "skip_duplicates_check": true,
+                    "disable_alignment": true
+                }}
+                '''
 
-        configs = [
-            json_format.ParseDict(json.loads(receiver_config_json), psi.PsiConfig()),
-            json_format.ParseDict(json.loads(sender_config_json), psi.PsiConfig()),
-        ]
-
-        def wrap(rank, link_desc, configs):
             link_ctx = link.create_grpc(link_desc, rank)
-            psi.psi(configs[rank], link_ctx)
+            configs = json_format.ParseDict(json.loads(config_json), psi.PsiConfig())
+
+            psi.psi(configs, link_ctx)
 
         jobs = [
             multiprocess.Process(
                 target=wrap,
-                args=(rank, link_desc, configs),
+                args=(rank, ),
             )
             for rank in range(2)
         ]
