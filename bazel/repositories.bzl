@@ -39,10 +39,10 @@ def _yacl():
         http_archive,
         name = "yacl",
         urls = [
-            "https://github.com/Yinbenxin/yacl/archive/refs/tags/gaia_1.5.tar.gz",
+            "https://github.com/Yinbenxin/yacl/archive/refs/tags/1.6.tar.gz",
         ],
-        strip_prefix = "yacl-gaia_1.5",
-        sha256 = "55e1ce3cb0938805d795e566b5dc066abb01bbd9ecc322a87a3bc72aada1a0fb",
+        strip_prefix = "yacl-1.6",
+        sha256 = "e03b332507bf0911b5bb1b3ad7e1ec71a6d3c224cc4246db37f01fea1dec69cc",
     )
 
 
@@ -51,10 +51,10 @@ def _libpsi():
         http_archive,
         name = "psi",
         urls = [
-            "https://github.com/Yinbenxin/psi/archive/refs/tags/gaia_1.5.tar.gz",
+            "https://github.com/Yinbenxin/psi/archive/refs/tags/1.6.tar.gz",
         ],
-        strip_prefix = "psi-gaia_1.5",
-        sha256 = "0b7211f8177a05f2fd1accd0267e2accc8043b427a5e6e76567657f08f6fbabc",
+        strip_prefix = "psi-1.6",
+        sha256 = "0e3128f25cb0b7b2cc06fcac5ab4f7e2386188bb9e8a4a1b4b4be6e405d12d78",
     )
 
 

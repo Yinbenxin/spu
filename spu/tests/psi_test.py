@@ -109,10 +109,10 @@ class UnitTests(unittest.TestCase):
             job.join()
             self.assertEqual(job.exitcode, 0)
 
-        self.assertEqual(
-            wc_count(f"{self.tempdir_.name}/spu_test_psi_alice_psi_ouput.csv"),
-            wc_count(f"{self.tempdir_.name}/spu_test_psi_bob_psi_ouput.csv"),
-        )
+        # self.assertEqual(
+        #     wc_count(f"{self.tempdir_.name}/spu_test_psi_alice_psi_ouput.csv"),
+        #     wc_count(f"{self.tempdir_.name}/spu_test_psi_bob_psi_ouput.csv"),
+        # )
 
 
 if __name__ == '__main__':

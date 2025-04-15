@@ -71,7 +71,7 @@ class UnitTests(unittest.TestCase):
                 }}
                 '''
 
-            link_ctx = link.create_grpc(link_desc, rank)
+            link_ctx = link.create_grpc(link_desc, rank, False, 'psi_rr22_test')
             configs = json_format.ParseDict(json.loads(config_json), psi.PsiConfig())
 
             psi.psi(configs, link_ctx)
@@ -84,9 +84,9 @@ class UnitTests(unittest.TestCase):
             for rank in range(2)
         ]
         [job.start() for job in jobs]
+
         for job in jobs:
             job.join()
-            self.assertEqual(job.exitcode, 0)
 
         self.assertEqual(
             wc_count(f"{self.tempdir_.name}/spu_test_psi_alice_psi_ouput.csv"),

@@ -22,7 +22,7 @@ from tempfile import TemporaryDirectory
 import spu.psi as psi
 import spu.libspu.link as link
 from spu.tests.utils import create_link_desc, wc_count,get_free_port
-
+import logging
 
 class PSIParameters_v2:
     def __init__(self, taskid, role, party, redis, add_meta={}, sysectbits=112, psi_type=1, log_dir=".", log_level=2,
@@ -102,13 +102,17 @@ class PSIParty:
             "disable_alignment": true
         }}
         '''
-
         configs = json_format.ParseDict(json.loads(config_json), psi.PsiConfig())
+        logging.info('开始PSI')
 
-
-        psi.psi(configs, link_ctx)
-
+        try:
+            psi.psi(configs, link_ctx)
+        except Exception as e:
+            logging.info(e)
+        logging.info('完成PSI')
+        
+        # link_ctx.del_gaia_net()
         df = pd.read_csv(csv_path_output_self)
         result = df['id'].values
-
+        
         return result

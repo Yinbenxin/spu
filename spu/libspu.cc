@@ -283,20 +283,22 @@ void BindLink(py::module& m) {
              const std::string& chl_type, const std::string& server_addr,
              const std::string& redis_uri) {
             // self->add_gaia_net();
-            self->add_gaia_net(nullptr, taskid, chl_type, server_addr,
-                               redis_uri);
+            self->add_gaia_net(taskid, chl_type, server_addr, redis_uri);
           },
           NO_GIL, "Adds gaia net", py::arg("taskid") = "taskid1",
           py::arg("chl_type") = "mem",
-          py::arg("server_addr") = "127.0.0.1:9900",
-          py::arg("redis_uri") = "tcp://127.0.0.1:6379")
+          py::arg("server_addr") = "10.100.66.68:6800",
+          py::arg("redis_uri") = "tcp://redis123@10.100.66.68:9379")
       .def(
-          "creat_gaia_net",
-          [](const std::shared_ptr<Context>& self,
-             std::shared_ptr<gaianet::IChannel> chl) {
-            self->add_gaia_net(std::move(chl));
+          "set_gaia_net",
+          [](const std::shared_ptr<Context>& self, gaianet::IChannel* chl) {
+            self->set_gaia_net(chl);
           },
-          NO_GIL, "Adds gaia net with parameters", py::arg("chl"));
+          NO_GIL, "Adds gaia net with parameters", py::arg("chl"))
+      .def(
+          "del_gaia_net",
+          [](const std::shared_ptr<Context>& self) { self->del_gaia_net(); },
+          NO_GIL, "Adds gaia net with parameters");
 
   // py::class_<gaianet::IChannel, std::shared_ptr<gaianet::IChannel>>(
   //     m, "GAIAChannel", "the gaia channel handle");
@@ -332,15 +334,15 @@ void BindLink(py::module& m) {
             std::numeric_limits<int64_t>::max() / 2;
 
         auto ctx = yacl::link::FactoryBrpc().CreateContext(desc, self_rank);
-        ctx->add_gaia_net(nullptr, taskid, chl_type, server_addr, redis_uri);
+        ctx->add_gaia_net(taskid, chl_type, server_addr, redis_uri);
         // ctx->ConnectToMesh(log_details ? spdlog::level::info
         //                                : spdlog::level::debug);
         return ctx;
       },
       py::arg("desc"), py::arg("self_rank"), py::arg("log_details") = false,
-      py::arg("taskid") = "taskid", py::arg("chl_type") = "mem",
-      py::arg("server_addr") = "127.0.0.1:9900",
-      py::arg("redis_uri") = "tcp://127.0.0.1:6379");
+      py::arg("taskid") = "taskid", py::arg("chl_type") = "grpc",
+      py::arg("server_addr") = "10.100.66.68:6800",
+      py::arg("redis_uri") = "tcp://redis123@10.100.66.68:9379");
 
   m.def("create_mem",
         [](const ContextDesc& desc,

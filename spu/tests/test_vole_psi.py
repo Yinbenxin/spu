@@ -3,9 +3,9 @@ import spu.pypsi as psi
 import time
 import os
 import argparse
-import threading
 import random
-import concurrent.futures
+import multiprocess
+from multiprocess import Queue
 from spu.tests.gene_input import gen_sender_receiver_data
 # import pygaialog
 
@@ -48,7 +48,7 @@ def psi_party(role, inputs, element_size):
                       server_output=True, use_redis=True,
                       log_with_console=True, net_log_switch=False, psi_type=3)
     print("psi_params = ", psi_params, "role = ", role)
-    params = psi.PSIParameters_v2("psitask", role, **psi_params)
+    params = psi.PSIParameters_v2("psitask123", role, **psi_params)
     psi_party = psi.PSIParty(params)
     res = psi_party.do_psi(inputs, element_size)
     print("role = ", role, ", psi res[:10]: ", res[:10])
@@ -72,9 +72,6 @@ def pressure_test():
     start_time = time.time()
     print("sendser_size: {}, receiver_size: {}, intersection_size: {}", len(sender_list), len(recv_list), intersection_size);
     if args.role == -1:
-        import multiprocess
-        from multiprocess import Queue
-        
         # 创建结果队列
         result_queue = Queue()
         
@@ -116,9 +113,9 @@ def pressure_test():
             job.join()
    
     elif args.role == 0:
-        old_psi(0, recv_list_bytes, element_size)
+        psi_party(0, recv_list_bytes, element_size)
     elif args.role == 1:
-        old_psi(1, sender_list_bytes, element_size)
+        psi_party(1, sender_list_bytes, element_size)
     else:
         raise Exception("unknown role ...")
     end_time = time.time()

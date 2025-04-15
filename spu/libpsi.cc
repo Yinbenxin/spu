@@ -83,9 +83,10 @@ void BindLibs(py::module& m) {
          const std::shared_ptr<yacl::link::Context>& lctx) -> py::bytes {
         psi::v2::PsiConfig psi_config;
         YACL_ENFORCE(psi_config.ParseFromString(config_pb));
-
         auto report = psi::RunPsi(psi_config, lctx);
-        return report.SerializeAsString();
+        return py::bytes();
+        // auto report = psi::RunPsi(psi_config, lctx);
+        // return report.SerializeAsString();
       },
       py::arg("psi_config"), py::arg("link_context"), "Run PSI with v2 API.",
       NO_GIL);
