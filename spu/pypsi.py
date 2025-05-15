@@ -21,7 +21,6 @@ from tempfile import TemporaryDirectory
 
 import spu.psi as psi
 import spu.libspu.link as link
-from spu.tests.utils import create_link_desc, wc_count,get_free_port
 import logging
 
 class PSIParameters_v2:
@@ -56,8 +55,8 @@ class PSIParty:
 
         # link_desc = create_link_desc(2)
         link_desc = link.Desc()
-        link_desc.add_party("alice", f"127.0.0.1:{get_free_port()}")
-        link_desc.add_party("bob", f"127.0.0.1:{get_free_port()}")
+        link_desc.add_party("alice", f"127.0.0.1:64321")
+        link_desc.add_party("bob", f"127.0.0.1:64322")
         link_ctx = link.create_grpc(link_desc, self.parameters.role, False, self.parameters.taskid, self.parameters.chl_type, self.parameters.party, self.parameters.redis )
         #产生uuid
         uuid_str = str(uuid.uuid4())
@@ -111,7 +110,7 @@ class PSIParty:
             logging.info(e)
         logging.info('完成PSI')
         
-        # link_ctx.del_gaia_net()
+        link_ctx.del_gaia_net()
         df = pd.read_csv(csv_path_output_self)
         result = df['id'].values
         

@@ -30,7 +30,7 @@ import setuptools.command.build_ext
 logger = logging.getLogger(__name__)
 
 # 3.8 is the minimum python version we can support
-SUPPORTED_PYTHONS = [(3, 9), (3, 10), (3, 11)]
+SUPPORTED_PYTHONS = [(3, 9), (3, 10), (3, 11), (3, 12)]  # Python 3.12 is not supported
 
 BAZEL_MAX_JOBS = os.getenv("BAZEL_MAX_JOBS")
 ROOT_DIR = os.path.dirname(__file__)
@@ -230,6 +230,16 @@ def pip_run(build_ext):
     for filename in files_to_remove:
         deleted_files += remove_file(build_ext.build_lib, filename)
     print("# of files deleted in {}: {}".format(build_ext.build_lib, deleted_files))
+    
+    # Save wheel package to project root directory
+    import glob
+    dist_dir = os.path.join(ROOT_DIR, 'dist')
+    if os.path.exists(dist_dir):
+        for wheel_file in glob.glob(os.path.join(dist_dir, '*.whl')):
+            wheel_name = os.path.basename(wheel_file)
+            shutil.copy2(wheel_file, os.path.join(ROOT_DIR, wheel_name))
+            print(f"Wheel package saved to {os.path.join(ROOT_DIR, wheel_name)}")
+
 
 
 class build_ext(setuptools.command.build_ext.build_ext):
@@ -279,6 +289,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     packages=setup_spec.get_packages(),
     cmdclass={"build_ext": build_ext},
