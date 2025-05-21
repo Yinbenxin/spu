@@ -153,9 +153,9 @@ py_package(
 )
 
 py_library(
-    name = "pypsi",
+    name = "py_psi",
     srcs = [
-        "pypsi.py",
+        "py_psi.py",
         ":link_py_proto",
         ":pir_py_proto",
         ":psi_py_proto",

@@ -358,6 +358,6 @@ py_test(
     deps = [
         ":utils",
         ":gene_input",
-        "//spu:pypsi",
+        "//spu:py_psi",
     ],
 )

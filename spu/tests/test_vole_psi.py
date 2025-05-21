@@ -1,4 +1,4 @@
-import spu.pypsi as psi
+import spu.py_psi as psi
 
 import time
 import os
@@ -15,7 +15,7 @@ ROLE_CLIENT = 1
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--role", type=int, default=-1, choices=[-1, 0, 1],
                     help="role, defalut value is -1, mean run all role")
-parser.add_argument("-t", "--type", type=str, default="grpc", choices=["grpc", "mem"],
+parser.add_argument("-t", "--type", type=str, default="mem", choices=["grpc", "mem"],
                     help="channel type, defalut value is grpc")
 parser.add_argument("-m", "--max_packet_size", type=int,
                     default=1024 * 16, help="max packet size")
