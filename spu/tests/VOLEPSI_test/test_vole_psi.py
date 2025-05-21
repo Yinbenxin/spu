@@ -1,4 +1,4 @@
-import spu.pypsi as psi
+import spu.py_psi as psi
 
 import time
 import os
