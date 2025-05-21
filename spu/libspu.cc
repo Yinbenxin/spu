@@ -288,20 +288,8 @@ void BindLink(py::module& m) {
           NO_GIL, "Adds gaia net", py::arg("taskid") = "taskid1",
           py::arg("chl_type") = "mem",
           py::arg("server_addr") = "10.100.66.68:6800",
-          py::arg("redis_uri") = "tcp://redis123@10.100.66.68:9379")
-      .def(
-          "set_gaia_net",
-          [](const std::shared_ptr<Context>& self, gaianet::IChannel* chl) {
-            self->set_gaia_net(chl);
-          },
-          NO_GIL, "Adds gaia net with parameters", py::arg("chl"))
-      .def(
-          "del_gaia_net",
-          [](const std::shared_ptr<Context>& self) { self->del_gaia_net(); },
-          NO_GIL, "Adds gaia net with parameters");
+          py::arg("redis_uri") = "tcp://redis123@10.100.66.68:9379");
 
-  // py::class_<gaianet::IChannel, std::shared_ptr<gaianet::IChannel>>(
-  //     m, "GAIAChannel", "the gaia channel handle");
   py::class_<gaianet::IChannel, std::shared_ptr<gaianet::IChannel>>(
       m, "GAIAChannel", "the gaia channel handle");
   m.def(

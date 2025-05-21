@@ -110,7 +110,6 @@ class PSIParty:
             logging.info(e)
         logging.info('完成PSI')
         
-        link_ctx.del_gaia_net()
         df = pd.read_csv(csv_path_output_self)
         result = df['id'].values
         
