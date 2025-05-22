@@ -54,7 +54,7 @@ def _libpsi():
             "https://github.com/Yinbenxin/psi/archive/refs/tags/2.0.tar.gz",
         ],
         strip_prefix = "psi-2.0",
-        sha256 = "08b9b444b933a4367c6fac82c794df48c480fec3c7a6a80a5ee24d0588881604",
+        sha256 = "d869d0b54270b3bd4b714a8ec846efa768da36342bc1ac645f87d286e5ed9d81",
     )
 
 
