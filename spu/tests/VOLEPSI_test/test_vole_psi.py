@@ -33,7 +33,7 @@ def get_server_from_env() -> (str, str):
     get grpc and redis server from env
     :return:
     """
-    grpc_server = os.getenv("GRPC_SERVER", "0.0.0.0:9900")
+    grpc_server = os.getenv("GRPC_SERVER", " gaia-mesh:570")
     redis_server = os.getenv("REDIS_SERVER", "tcp://redis123@127.0.0.1:6379")
     print("grpc server ", grpc_server)
     return grpc_server, redis_server

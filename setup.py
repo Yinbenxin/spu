@@ -30,7 +30,7 @@ import setuptools.command.build_ext
 logger = logging.getLogger(__name__)
 
 # 3.8 is the minimum python version we can support
-SUPPORTED_PYTHONS = [(3, 9), (3, 10), (3, 11), (3, 12)]  # Python 3.12 is not supported
+SUPPORTED_PYTHONS = [(3, 8), (3, 9), (3, 10), (3, 11), (3, 12)]  # Python 3.12 is not supported
 
 BAZEL_MAX_JOBS = os.getenv("BAZEL_MAX_JOBS")
 ROOT_DIR = os.path.dirname(__file__)
@@ -286,6 +286,7 @@ setuptools.setup(
     url="https://github.com/secretflow/spu",
     keywords=("spu mpc secretflow compiler vm ABY3 secure computation"),
     classifiers=[
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
