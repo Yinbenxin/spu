@@ -2,7 +2,8 @@ import os
 import json
 import argparse
 from psi_common import psi_party
-
+# python run_psi.py -r 0
+# python run_psi.py -r 1
 def load_data(file_path):
     """从文件加载数据"""
     with open(file_path, 'r') as f:
