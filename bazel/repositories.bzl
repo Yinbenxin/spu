@@ -42,7 +42,7 @@ def _yacl():
             "https://github.com/Yinbenxin/yacl/archive/refs/tags/2.0.tar.gz",
         ],
         strip_prefix = "yacl-2.0",
-        sha256 = "382532b30e363a95f2657b85924e368fb6db670a0cc12fe7ebd13461a4e1e858",
+        sha256 = "073d79c26a45cf5d1ccbb8fde1aa9526e84e64d0c4c362287de7f9039c25d094",
     )
 
 
@@ -54,7 +54,7 @@ def _libpsi():
             "https://github.com/Yinbenxin/psi/archive/refs/tags/2.0.tar.gz",
         ],
         strip_prefix = "psi-2.0",
-        sha256 = "d869d0b54270b3bd4b714a8ec846efa768da36342bc1ac645f87d286e5ed9d81",
+        sha256 = "4b0a2f5da0e84c848f27626fe778a28f78a15c2b73dc9d052771590274223418",
     )
 
 
